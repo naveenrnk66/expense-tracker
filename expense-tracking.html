@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Family Expense Tracker</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 95%;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    input, select {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      transition: 0.3s;
+    }
+
+    input:focus, select:focus {
+      border-color: #667eea;
+      outline: none;
+    }
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      background: #667eea;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #5a67d8;
+      transform: scale(1.05);
+    }
+
+    .cards {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      flex: 1;
+      padding: 15px;
+      border-radius: 10px;
+      color: white;
+      text-align: center;
+    }
+
+    .total {
+      background: #28a745;
+    }
+
+    .remaining {
+      background: #dc3545;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    thead {
+      background: #667eea;
+      color: white;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f2f2f2;
+    }
+
+    tbody tr:hover {
+      background: #e0e7ff;
+      transition: 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h2>💰 Family Expense Tracker</h2>
+
+  <!-- Budget -->
+  <div class="section">
+    <div class="row">
+      <input type="number" id="budget" placeholder="Enter Monthly Budget">
+      <button onclick="setBudget()">Set Budget</button>
+    </div>
+  </div>
+
+  <!-- Add Expense -->
+  <div class="section">
+    <div class="row">
+      <input type="text" id="desc" placeholder="Description">
+      <select id="category">
+        <option>Food</option>
+        <option>Transport</option>
+        <option>Shopping</option>
+        <option>Bills</option>
+        <option>Others</option>
+      </select>
+      <input type="number" id="amount" placeholder="Amount">
+      <button onclick="addExpense()">Add</button>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="cards">
+    <div class="card total">
+      <h3>Total</h3>
+      <p>₹ <span id="total">0</span></p>
+    </div>
+
+    <div class="card remaining">
+      <h3>Remaining</h3>
+      <p>₹ <span id="remaining">0</span></p>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th>Category</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody id="expenseList"></tbody>
+  </table>
+
+</div>
+
+<script>
+  let expenses = [];
+  let budget = 0;
+
+  function setBudget() {
+    budget = Number(document.getElementById("budget").value);
+    updateSummary();
+  }
+
+  function addExpense() {
+    let desc = document.getElementById("desc").value;
+    let category = document.getElementById("category").value;
+    let amount = Number(document.getElementById("amount").value);
+
+    if (!desc || amount <= 0) {
+      alert("Enter valid details");
+      return;
+    }
+
+    let expense = { desc, category, amount };
+    expenses.push(expense);
+
+    displayExpenses();
+    updateSummary();
+
+    document.getElementById("desc").value = "";
+    document.getElementById("amount").value = "";
+  }
+
+  function displayExpenses() {
+    let list = document.getElementById("expenseList");
+    list.innerHTML = "";
+
+    expenses.forEach(exp => {
+      let row = `
+        <tr>
+          <td>${exp.desc}</td>
+          <td>${exp.category}</td>
+          <td>₹${exp.amount}</td>
+        </tr>
+      `;
+      list.innerHTML += row;
+    });
+  }
+
+  function updateSummary() {
+    let total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+
+    document.getElementById("total").innerText = total;
+    document.getElementById("remaining").innerText = budget - total;
+  }
+</script>
+
+</body>
+</html>
